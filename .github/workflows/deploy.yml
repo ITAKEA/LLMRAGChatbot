@@ -59,6 +59,7 @@ jobs:
         env:
           VM_USERNAME: azureuser
           VM_PUBLIC_IP: 52.169.211.207
+          TAG: ${{ github.sha }}
           DOTENV_FILE_CONTENT: ${{ secrets.DOTENV_FILE_CONTENT }}
         run: |
           # Ensure the directory exists on the remote machine
@@ -73,6 +74,7 @@ jobs:
           # Connect to the VM and run docker-compose commands
           ssh -o StrictHostKeyChecking=no $VM_USERNAME@$VM_PUBLIC_IP << EOF
             cd ~/deployments/myapp
+            export TAG=${{ github.sha }}
             docker-compose pull
             docker-compose up -d --build
             docker-compose ps

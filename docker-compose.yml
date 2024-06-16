@@ -2,14 +2,12 @@ version: '3'
 
 services:
   hospital_neo4j_etl:
-    build: ./hospital_neo4j_etl
-    image: clbo/hospital_neo4j_etl
+    image: clbo/hospital_neo4j_etl:${TAG:-latest}
     env_file:
       - .env
 
   chatbot_api:
-    build: ./chatbot_api
-    image: clbo/chatbot_api
+    image: clbo/chatbot_api:${TAG:-latest}
     env_file:
       - .env
     depends_on:
@@ -18,8 +16,7 @@ services:
       - "8000:8000"
 
   chatbot_frontend:
-    build: ./chatbot_frontend
-    image: clbo/chatbot_frontend 
+    image: clbo/chatbot_frontend:${TAG:-latest}
     env_file:
       - .env
     depends_on:
