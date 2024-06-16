@@ -59,8 +59,18 @@ jobs:
         env:
           VM_USERNAME: azureuser
           VM_PUBLIC_IP: 52.169.211.207
+          DOTENV_FILE_CONTENT: ${{ secrets.DOTENV_FILE_CONTENT }}
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml .env $VM_USERNAME@$VM_PUBLIC_IP:~/deployments/myapp/
+          # Ensure the directory exists on the remote machine
+          ssh -o StrictHostKeyChecking=no $VM_USERNAME@$VM_PUBLIC_IP "mkdir -p ~/deployments/myapp/"
+          
+          # Copy docker-compose.yml
+          scp -o StrictHostKeyChecking=no docker-compose.yml $VM_USERNAME@$VM_PUBLIC_IP:~/deployments/myapp/
+          
+          # Write the .env file content to the remote VM
+          ssh -o StrictHostKeyChecking=no $VM_USERNAME@$VM_PUBLIC_IP "echo \"$DOTENV_FILE_CONTENT\" > ~/deployments/myapp/.env"
+          
+          # Connect to the VM and run docker-compose commands
           ssh -o StrictHostKeyChecking=no $VM_USERNAME@$VM_PUBLIC_IP << EOF
             cd ~/deployments/myapp
             docker-compose pull
